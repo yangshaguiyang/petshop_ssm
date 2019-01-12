@@ -1,0 +1,20 @@
+div{
+      		height:160px;
+      		width:160px;
+      		
+      		border:1px red solid;
+      		background:deeppink;
+      	}
+      	
+
+.color_red{
+	background:red;
+}
+
+.color_green{
+	background:green;
+}
+
+.color_darkgreen{
+	background:darkgreen;
+}

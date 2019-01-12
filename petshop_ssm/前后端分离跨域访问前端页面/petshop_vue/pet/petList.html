@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="../css/bootstrap.css" />
+		<style type="text/css">
+			tr td,
+			th {
+				text-align: center;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="app" style="width:75%;margin: 10px auto;">
+			<table class="table table-bordered table-condensed table-hover table-responsive table-striped">
+				<caption class="text-center">
+					<h4>宠物列表</h4></caption>
+				<tr>
+					<th>宠物编号</th>
+					<th>宠物名称</th>
+					<th>宠物价格</th>
+					<th>宠物图片</th>
+					<th>操作</th>
+				</tr>
+				<tr>
+					<td colspan="5"><button class="pull-right btn btn-sm btn-success" @click="add">增加</button></td>
+				</tr>
+				<tr v-for="(pet,index) in petList">
+					<td>{{pet.id}}</td>
+					<td>{{pet.name}}</td>
+					<td>{{pet.price}}</td>
+					<td><img :src="pet.photo|photofilter" width="58px" /></td>
+					<td :id='index'>
+						<button class="btn btn-sm btn-default" @click="edit">编辑</button>
+						<button class="btn btn-sm btn-danger" @click="del">删除</button>
+					</td>
+				</tr>
+			</table>
+			<div v-show="isShowAdd">
+				<form action="#" method="post">
+					<table class="table table-bordered table-condensed table-hover table-responsive table-striped">
+						<tr>
+
+							<td>
+								<label>宠物编号</label>
+								<input type="text" placeholder="请输入宠物编号" v-model="id"  />
+							</td>
+						</tr>
+						<tr>
+
+							<td>
+								<label>宠物姓名</label>
+								<input type="text" placeholder="请输入宠物姓名" v-model="name"  />
+							</td>
+						</tr>
+						<tr>
+
+							<td>
+								<label>宠物价格</label>
+								<input type="text" placeholder="请输入宠物价格" v-model="price" />
+							</td>
+						</tr>
+						<tr>
+
+							<td>
+								<label>宠物编号</label>
+								<input type="text" placeholder="请输入宠物图片" v-model="photo" />
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<input type="button" value="确定" class="btn btn-sm btn-primary" @click="addOk" />
+								<input typet="button" value="取消" class="btn btn-sm btn-warning" @click="addCancel" />
+							</td>
+						</tr>
+					</table>
+				</form>
+			</div>
+			<div v-show="isShowEdit">
+				<form action="#" method="post">
+					<table class="table table-bordered table-condensed table-hover table-responsive table-striped">
+						<tr>
+
+							<td>
+								<label>宠物编号</label>
+								<input type="text" placeholder="请输入宠物编号" v-model="newId"  />
+							</td>
+						</tr>
+						<tr>
+
+							<td>
+								<label>宠物姓名</label>
+								<input type="text" placeholder="请输入宠物姓名" v-model="newName"  />
+							</td>
+						</tr>
+						<tr>
+
+							<td>
+								<label>宠物价格</label>
+								<input type="text" placeholder="请输入宠物价格" v-model="newPrice" />
+							</td>
+						</tr>
+						<tr>
+
+							<td>
+								<label>宠物编号</label>
+								<input type="text" placeholder="请输入宠物图片" v-model="newPhoto" />
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<input type="button" value="确定" class="btn btn-sm btn-primary" @click="editOk" />
+								<input typet="button" value="取消" class="btn btn-sm btn-warning" @click="editCancel" />
+							</td>
+						</tr>
+					</table>
+				</form>
+			</div>
+		</div>
+		<script src="../js/vue.js"></script>
+		<script type="text/javascript" src="../js/jquery-2.1.4.min.js" ></script>
+		<script>
+			Vue.filter("photofilter",function(value){
+				
+				return "http://localhost:8080/petshop_ssm"+value
+			})
+			var app = new Vue({
+				el: "#app",
+				data: {
+					id: '',
+					name: '',
+					price: '',
+					photo: '',
+					newId: '',
+					newName: '',
+					newPrice: '',
+					newPhoto: '',
+					isShowAdd: false,
+					isShowEdit:false,
+					editId:0,
+					petList: [{
+							'id': 1,
+							'name': '小白',
+							'price': 199,
+							'photo': '../img/pet1.jpg'
+						},
+						{
+							'id': 2,
+							'name': '小黄',
+							'price': 188,
+							'photo': '../img/pet2.jpg'
+						},
+						{
+							'id': 3,
+							'name': '小小',
+							'price': 299,
+							'photo': '../img/pet3.jpg'
+						}
+					],
+				},
+				methods: {
+					add: function() {
+						this.isShowAdd=true;
+					},
+					edit: function(e) {
+						 this.isShowEdit=true;
+						 var id = e.target.offsetParent.id;
+						 this.editId = id;
+					     this.newId = this.petList[id].id;
+						 this.newName = this.petList[id].name;
+						 this.newPrice = this.petList[id].price;
+						 this.newPhoto = this.petList[id].photo;
+					},
+					del: function(e) {
+					 var id = e.target.offsetParent.id;
+					 if(confirm("您确认要删除吗？")){
+					 	 this.petList.splice(id,1);
+					 }
+					},
+					addOk:function(){
+						var pet = {};
+						pet.id = this.id;
+						pet.name = this.name;
+						pet.price = this.price;
+						pet.photo = this.photo;
+						this.petList.push(pet);
+					},
+					addCancel:function(){this.isShowAdd=false;},
+					editCancel:function(){this.isShowEdit=false;},
+					editOk:function(){
+						this.petList[this.editId].id = this.newId;
+						this.petList[this.editId].name = this.newName;
+						this.petList[this.editId].price = this.newPrice;
+						this.petList[this.editId].photo = this.newPhoto;
+						this.isShowEdit=false;
+					}
+				},
+				mounted:function(){
+					var that = this;
+					$.ajax({
+						type:"get",
+						url:"http://localhost:8080/petshop_ssm/pet/petList_vue",
+						async:true,
+						success:function(data){
+							that.petList = eval(data);
+						}
+					});
+				}
+			})
+			
+		</script>
+
+	</body>
+
+</html>
